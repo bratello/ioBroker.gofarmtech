@@ -4,7 +4,7 @@
 
 This adapter is a gofarmtech for the creation of an ioBroker adapter. You do not need it at least that you plan developing your own adapter.
 
-It includes both code running within iobroker and as vis widget. If you only plan to create a vis widget then you should use the [iobroker.vis-gofarmtech](https://github.com/ioBroker/ioBroker.vis-gofarmtech) instead.
+It includes both code running within iobroker and as vis widget.
 
 ## Steps 
 1. download and unpack this packet from github ```https://github.com/ioBroker/ioBroker.gofarmtech/archive/master.zip```
