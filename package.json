@@ -1,0 +1,41 @@
+{
+  "name": "iobroker.gofarmtech",
+  "version": "0.6.0",
+  "description": "gofarmtech",
+  "author": {
+    "name": "@@Author@@",
+    "email": "@@email@@"
+  },
+  "contributors": [
+    {
+      "name": "@@Author@@",
+      "email": "@@email@@"
+    }
+  ],
+  "homepage": "https://github.com/bratello/ioBroker.gofarmtech",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "gofarmtech",
+    "Smart Home",
+    "home automation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bratello/ioBroker.gofarmtech"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "mocha": "^4.1.0",
+    "chai": "^4.1.2"
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  },
+  "bugs": {
+    "url": "https://github.com/bratello/ioBroker.gofarmtech/issues"
+  },
+  "readmeFilename": "README.md"
+}
