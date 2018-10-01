@@ -1,5 +1,5 @@
 ![Logo](admin/gofarmtech.png)
-# ioBroker.gofarmtech
+# iobroker.gofarmtech
 =================
 
 This adapter is a gofarmtech for the creation of an ioBroker adapter. You do not need it at least that you plan developing your own adapter.
