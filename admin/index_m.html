@@ -13,12 +13,18 @@
 <script type="text/javascript" src="../../js/adapter-settings.js"></script>
 <script type="text/javascript" src="words.js"></script>
  <style>
-  .m .col .select-wrapper+label {
-   top: -26px;  
-  }
-     .m span{
-         font-size: 0.9em;
-     }
+    .m .col .select-wrapper+label {
+        top: -26px;  
+    }
+    .m span{
+        font-size: 0.9em;
+    }
+    .sub-title {
+        margin-top: 2rem!important;
+        padding: 0.5rem;
+        background: #64b5f6;
+        color: white;
+    }
  </style>
 <!-- you have to define 2 functions in the global scope: -->
 <script type="text/javascript">
@@ -26,17 +32,17 @@
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
         // example: select elements with id=key and class=value and insert value
-       if (!settings) return;
+        if (!settings) return;
         $('.value').each(function () {            
             var $key = $(this);
             var id = $key.attr('id');
             if ($key.attr('type') === 'checkbox') {
-		        // do not call onChange direct, because onChange could expect some arguments
+                // do not call onChange direct, because onChange could expect some arguments
                 $key.prop('checked', settings[id]).on('change', function() {
                     onChange();
                 });
             } else {
-		        // do not call onChange direct, because onChange could expect some arguments
+                // do not call onChange direct, because onChange could expect some arguments
                 $key.val(settings[id]).on('change', function() {
                     onChange();
                 }).on('keyup', function() {
@@ -53,10 +59,17 @@
     function save(callback) {
         // example: select elements with class=value and build settings object
         var obj = {};
+        if($('#pass').val() !== $('#pass_confirm').val()) {
+            showMessage('<h5>Password Confirmation and Password fields are not equal!</h5>');
+            return;
+        }
         $('.value').each(function () {
-            var $this = $(this);
-            if ($this.attr('type') === 'checkbox') {
+            let $this = $(this);
+            let type = $this.attr('type');
+            if (type === 'checkbox') {
                 obj[$this.attr('id')] = $this.prop('checked');
+            } else if(type === 'number') {
+                obj[$this.attr('id')] = parseInt($this.val());
             } else {
                 obj[$this.attr('id')] = $this.val();
             }
@@ -66,59 +79,83 @@
 </script>
 </head>
 <body>
-    <!-- you have to put your config page in a div with id adapter-container -->
     <div class="m adapter-container">
         <div class="row">
-            <!-- Forms are the standard way to receive user inputted data.
-         Learn more http://materializecss.com/forms.html-->
             <div class="row">
                 <div class="input-field col s6">
                     <img src="gofarmtech.png" class="logo">
                 </div>
             </div>
             <div class="row">
-                <div class="input-field col s3">
-                    <input class="value" id="test1" type="checkbox" />
-                    <label for="test1" class="translate">test1</label>
-                </div>
+                <h6 class="translate sub-title" data-lang="Authentication settings">Authentication settings</h6>
             </div>
             <div class="row">
                 <div class="input-field col s12 m6 l4">
-                    <input class="value" id="myText" type="text">
-                    <label for="myText">Text</label>
-                    <span class="translate">Descriptions of the input field</span>
+                    <input class="value" id="user" type="text">
+                    <label for="user">User</label>
+                    <span class="translate">MQTT Broker Username</span>
                 </div>
                 <div class="input-field col s12 m6 l4">
-                    <input type="number" class="value" id="test2" />
-                    <label for="test2" class="translate">Number</label>
-                    <!-- Important: label must come directly after input. Label is important. -->
-                    <span class="translate">test2</span>
+                    <input class="value" id="pass" type="text">
+                    <label for="pass">Password</label>
+                    <span class="translate">MQTT Broker Password</span>
                 </div>
                 <div class="input-field col s12 m6 l4">
-                    <input id="email" type="email" class="value validate">
-                    <label for="email" data-error="wrong" data-success="right">Email</label>
-                    <!--  You can add custom validation messages by adding either data-error or data-success attributes to your input field labels.-->
-                    <span class="translate">Verification input</span>
+                    <input class="value" id="pass_confirm" type="text">
+                    <label for="pass_confirm">Password Confirmation</label>
+                    <span class="translate">MQTT Broker Password Confirmation</span>
                 </div>
             </div>
             <div class="row">
+                <h6 class="translate sub-title" data-lang="Connection settings">Connection settings</h6>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" class="value" id="port" />
+                    <label for="port" class="translate">Port</label>
+                    <span class="translate">MQTTP Broker Port</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" class="value" id="connectionTimeout" />
+                    <label for="connectionTimeout" class="translate">Timeout</label>
+                    <span class="translate">MQTTP Broker Connection Timeout (sec)</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" class="value" id="apiPort" />
+                    <label for="apiPort" class="translate">API Port</label>
+                    <span class="translate">ioBroker SimpleAPI Service Port</span>
+                </div>
+            </div>
+            <div class="row">
+                <h6 class="translate sub-title" data-lang="General settings">General settings</h6>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" class="value" id="cronTimeout" />
+                    <label for="cronTimeout" class="translate">Cron Interval</label>
+                    <span class="translate">How Often To Run Tasks (sec)</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" class="value" id="timersUpdateInterval" />
+                    <label for="timersUpdateInterval" class="translate">TimerUpdate Interval</label>
+                    <span class="translate">How Often To Update Device Timers (sec)</span>
+                </div>
                 <div class="input-field col s12 m4">
-                    <select class="value" id="mySelect">
-                        <option value="auto" class="translate">Auto</option>
-                        <option value="manual" class="translate">Manual</option>
+                    <select class="value" id="logLevel" type="number">
+                        <option value="1" class="translate">Information</option>
+                        <option value="2" class="translate">Warning</option>
+                        <option value="4" class="translate">Error</option>
+                        <option value="3" class="translate">Info + Warning</option>
+                        <option value="6" class="translate">Warning + Error</option>
+                        <option value="7" class="translate">All</option>
                     </select>
-                    <label for="mySelect" class="translate">My select</label>
-                    <!-- Important: label must come directly after select. Label is important. -->
-                </div>
-                <div class="input-field col s12 m8">
-                    <i class="material-icons prefix">mode_edit</i>
-                    <textarea id="Textarea" class="value materialize-textarea"></textarea>
-                    <label for="Textarea">Message</label>
+                    <label for="logLevel" class="translate">Adapter Logging Level</label>
                 </div>
             </div>
+            <br/><br/><br/><br/><br/><br/><br/><br/>
             <div class="row">
                 <div class="col s12">
-                    <p class="translate">on save adapter restarts with new config immediately</p>
+                    <h6 class="translate">Adapter restarts with new config immediately after the save</h6>
                 </div>
             </div>
         </div>
