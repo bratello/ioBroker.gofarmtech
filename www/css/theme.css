@@ -1,0 +1,245 @@
+.md-app {
+  min-height: 100vh;
+}
+
+.md-tabs .md-button .md-tab-icon.changed  {
+  color: #ff5252 !important;
+}
+
+.router-link-active .md-icon.md-theme-default.md-icon-font {
+  color: #448aff;
+}
+
+.md-app-drawer {
+  width: 250px;
+}
+
+.md-app-drawer .md-list-item-content>.md-icon:first-child {
+  margin-right: 16px;
+}
+
+.md-title.app-title .clock-label {
+  margin-left:58px;
+  position: absolute;
+  font-size: 12px;
+  margin-left: 12px;
+  left: 0;
+  top: 40px;
+}
+
+.md-switch .md-switch-label::first-letter, .md-layout-item label::first-letter {
+  text-transform: uppercase;
+}
+
+.with-tabs main > .md-app-scroller {
+	margin-top: 136px !important;
+}
+
+.dynamic-drawer-btn {
+  display: none;   
+}
+
+.md-title.app-title {
+  margin-left: 10px !important;
+}
+
+.last-error-field p {
+  margin: 0;
+  font-size: 16px;
+  color: #ff5252;
+  line-height: 32px;
+}
+
+.last-error-field label {
+  top: -3px;
+  color: rgba(0,0,0,0.54);
+  font-size: 12px;
+}
+
+.timer-settings-container .disabled {
+  pointer-events: none;
+  filter: blur(1px) grayscale(90%);
+}
+
+.timeslot-list-item {
+	box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+	margin: 6px 0;
+}
+
+.timeslot-list-item .timeslot-delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 0;
+}
+
+.timeslot-list-item .timeslot-delete-button .md-icon.md-theme-default.md-icon-font {
+  color: white;
+}
+
+.timeslot-list-item .md-list-item-content {
+	padding-top: 58px;
+}
+
+.timeslot-list-item .md-list-item-text  label {
+	margin-top: 8px;
+    display: block;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.timeslot-list-item input[type=range] {
+	margin-top: 2px;
+}
+
+.timeslot-list-item-star {
+	color: #ff5252;
+}
+
+.timeslot-list-item-days {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	background-color: #448aff;
+	padding: 8px;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+}
+
+.timeslot-list-item-days .timeslot-list-item-day {
+	display: inline-block;
+	width: 28px;
+	padding: 2px;
+	margin-right: 8px;
+	border-radius: 4px;
+	text-align: center;
+	color: white;
+	font-size: 16px;
+	outline: none;
+	cursor: pointer;
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+.timeslot-list-item-days .timeslot-list-item-day.inactive {
+	text-decoration: line-through;
+	color: rgba(255,255,255, 0.7);
+	background-color: #3b76d9;
+}
+
+@media only screen and (max-width: 600px) and (min-width: 0) {
+	.md-app-content {
+		padding: 8px;
+	}
+
+  .dynamic-drawer-btn {
+    display: block;
+  }
+
+  .md-title.app-title .clock-label {
+    margin-left:58px;
+  }
+
+	.timeslot-list-item-days .timeslot-list-item-day {
+		margin-right: 4px;
+	}
+}
+
+input[type=range] {
+  height: 25px;
+  -webkit-appearance: none;
+  margin: 10px 0;
+  width: 100%;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000;
+  background: #2497E3;
+  border-radius: 1px;
+  border: 0px solid #000000;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px #000000;
+  border: 1px solid #2497E3;
+  height: 18px;
+  width: 18px;
+  border-radius: 25px;
+  background: #A1D0FF;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -7px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #2497E3;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000;
+  background: #2497E3;
+  border-radius: 1px;
+  border: 0px solid #000000;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 0px 0px 0px #000000;
+  border: 1px solid #2497E3;
+  height: 18px;
+  width: 18px;
+  border-radius: 25px;
+  background: #A1D0FF;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #2497E3;
+  border: 0px solid #000000;
+  border-radius: 2px;
+  box-shadow: 0px 0px 0px #000000;
+}
+input[type=range]::-ms-fill-upper {
+  background: #2497E3;
+  border: 0px solid #000000;
+  border-radius: 2px;
+  box-shadow: 0px 0px 0px #000000;
+}
+input[type=range]::-ms-thumb {
+  margin-top: 1px;
+  box-shadow: 0px 0px 0px #000000;
+  border: 1px solid #2497E3;
+  height: 18px;
+  width: 18px;
+  border-radius: 25px;
+  background: #A1D0FF;
+  cursor: pointer;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #2497E3;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #2497E3;
+}

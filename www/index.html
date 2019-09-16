@@ -1,4 +1,114 @@
-<h3>gofarmtech adapter</h3>
-<p>
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Settings</title>
+	<meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
+	
+	<link rel="shortcut icon" href="favicon.ico" />
+    <link rel="stylesheet" href="css/vue-material.css">
+    <link rel="stylesheet" href="css/default.css">
+	<link rel="stylesheet" href="css/theme.css">
 
-</p>
+	<script src="src/vue.js"></script>
+	<script src="src/vue-resource.js"></script>
+	<script src="src/vue-material.min.js"></script>
+	<style>
+		@font-face {
+			font-family: 'Roboto';
+			font-style: normal;
+			font-weight: 400;
+			src: local('Roboto'), local('Roboto-Regular'), url(font/Roboto.woff2) format('woff2');
+			unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+		}
+		@font-face {
+			font-family: 'Material Icons';
+			font-style: normal;
+			font-weight: 400;
+			src: url(font/Icons.woff2) format('woff2');
+		}
+	</style>
+</head>
+<body>
+	<md-app md-waterfall md-mode="fixed-last" :class="{'with-tabs' : currentNavigation && currentNavigation.tabs.length > 0}">
+		<md-app-toolbar class="md-large md-dense md-primary">
+			<div class="md-toolbar-row">
+				<div class="md-toolbar-section-start">
+					<md-button class="md-icon-button dynamic-drawer-btn" @click="showNavigation = true">
+						<md-icon>menu</md-icon>
+					</md-button>
+					<span class="md-title app-title">{{deviceName}}<span class="clock-label">{{nowText}}</span></span>
+					<md-menu md-direction="bottom-start" :md-offset-x="-120" v-if="devices && devices.length">
+						<md-button class="md-icon-button" md-menu-trigger>
+							<md-icon>arrow_drop_down</md-icon>
+						</md-button>
+						<md-menu-content>
+							<md-menu-item @click="onSelectDevice(device)" v-for="device in devices" :key="device.deviceId">
+								<span>{{device.deviceId}}.{{device.description.nm}}</span>
+							</md-menu-item>
+						</md-menu-content>
+					</md-menu>
+				</div>
+				<div class="md-toolbar-section-end">
+					<md-menu md-direction="bottom-start" v-if="currentNavigation && currentNavigation.menu.length">
+						<md-button class="md-icon-button" md-menu-trigger>
+							<md-icon>more_vert</md-icon>
+						</md-button>
+						<md-menu-content>
+							<md-menu-item @click="item.onClick()" :disabled="!item.enabled()" v-for="item in currentNavigation.menu" :key="item.id">
+								<md-icon>{{item.icon}}</md-icon>
+								<span>{{item.text}}</span>
+							</md-menu-item>
+						</md-menu-content>
+					</md-menu>
+				</div>
+			</div>
+			<div class="md-toolbar-row">
+				<md-tabs class="md-primary" v-if="currentNavigation && currentNavigation.tabs.length">
+					<template slot="md-tab" slot-scope="{ tab }">
+						<i class="md-icon md-icon-font md-tab-icon md-theme-default" :class="{changed: tab.data.changed}">{{tab.icon}}</i>
+						<span class="md-tab-label">{{ tab.label }}</span>
+					</template>
+            		<md-tab  v-for="tab in currentNavigation.tabs" :key="tab.id" :md-label="tab.text" @click="tab.onSelectTab(tab)" md-icon="alarm" :md-template-data="{ changed: tab.changed }"></md-tab>
+            	</md-tabs>
+			</div>
+		</md-app-toolbar>
+		<md-app-drawer :md-active.sync="showNavigation" md-swipeable class="dynamic-drawer" v-if="mobileNavigation">
+			<md-toolbar class="md-primary" md-elevation="0">
+			  <span class="md-title"><b>Configuration</b></span>
+			</md-toolbar>
+			<md-list>
+				<md-list-item v-for="navigation in navigations" :key="navigation.id" @click="onNavigate(navigation)" :class="{'router-link-active' : currentNavigation == navigation}">
+					<md-icon>{{navigation.icon}}</md-icon>
+					<span class="md-list-item-text md-subheading"><b>{{navigation.text}}</b></span>
+				</md-list-item>
+			</md-list>
+			<md-dialog-alert :md-active.sync="navigationDirtyError" md-content="Save changes before navigation" md-confirm-text="OK"></md-dialog-alert>
+		</md-app-drawer>
+		<md-app-drawer md-permanent="clipped" class="static-drawer" v-else>
+			<md-toolbar class="md-transparent" md-elevation="0">
+				<span class="md-title"><b>Configuration</b></span>
+			</md-toolbar>
+			<md-list>
+				<md-list-item v-for="navigation in navigations" :key="navigation.id" @click="onNavigate(navigation)" :class="{'router-link-active' : currentNavigation == navigation}">
+					<md-icon>{{navigation.icon}}</md-icon>
+					<span class="md-list-item-text md-subheading"><b>{{navigation.text}}</b></span>
+				</md-list-item>
+			</md-list>
+			<md-dialog-alert :md-active.sync="navigationDirtyError" md-content="Save changes before navigation" md-confirm-text="OK"></md-dialog-alert>
+		</md-app-drawer>
+		<md-app-content>
+			<md-empty-state
+				v-if="initialized && !currentNavigation"
+    			md-rounded
+    			md-icon="access_time"
+    			md-label="Nothing to configure"
+    			md-description="Connect your GoFarmTech device to the ioBroker first">
+  			</md-empty-state>
+			<component v-if="currentNavigation" :is="currentNavigation.component" :navigation="currentNavigation"/>
+		</md-app-content>
+	</md-app>
+
+	<script src="src/app.js"></script>
+</body>
+</html>
