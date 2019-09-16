@@ -76,14 +76,50 @@
         "type": "general",
         "license": "MIT",
         "messagebox": false,
-        "restartAdapters": ["vis"]
+        "restartAdapters": ["vis"],
+        "localLink": "%web_protocol%://%ip%:%web_port%/gofarmtech/index.html?apiPort=%apiPort%"
     },
     "native": {
-        "test1": true,
-        "test2": 42,
-        "mySelect": "auto"
+        "logLevel": 7,
+        "user": "",
+        "pass": "",
+        "port": 1883,
+        "apiPort": 8087,
+        "timersUpdateInterval": 3600,
+        "cronTimeout" : 60,
+        "connectionTimeout" : 300
     },
     "objects": [
 
+    ],
+    "instanceObjects": [
+        {
+            "_id":  "devices",
+            "type": "channel",
+            "common": {
+                "name": "Devices group"
+            },
+            "native": {}
+        },
+        {
+            "_id":  "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id":  "info.connection",
+            "type": "state",
+            "common": {
+                "role":  "info.clients",
+                "name":  "List of connected clients",
+                "type":  "string",
+                "read":  true,
+                "write": false
+            },
+            "native": {}
+        }
     ]
 }

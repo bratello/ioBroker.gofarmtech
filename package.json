@@ -3,13 +3,13 @@
   "version": "0.6.0",
   "description": "gofarmtech",
   "author": {
-    "name": "@@Author@@",
-    "email": "@@email@@"
+    "name": "bratello",
+    "email": "https://github.com/bratello"
   },
   "contributors": [
     {
-      "name": "@@Author@@",
-      "email": "@@email@@"
+      "name": "bratello",
+      "email": "https://github.com/bratello"
     }
   ],
   "homepage": "https://github.com/bratello/ioBroker.gofarmtech",
@@ -24,7 +24,10 @@
     "type": "git",
     "url": "https://github.com/bratello/ioBroker.gofarmtech"
   },
-  "dependencies": {},
+  "dependencies": {
+    "mqtt-connection": "^4.0.0",
+    "@iobroker/adapter-core": "^1.0.3"
+  },
   "devDependencies": {
     "gulp": "^3.9.1",
     "mocha": "^4.1.0",
