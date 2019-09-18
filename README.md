@@ -1,75 +1,26 @@
 ![Logo](admin/gofarmtech.png)
-# iobroker.gofarmtech
+# ioBroker GoFarmTech
 =================
 
-This adapter is a gofarmtech for the creation of an ioBroker adapter. You do not need it at least that you plan developing your own adapter.
+This adapter provides the integration of [GoFarmTech](https://github.com/bratello/GoFarmTech) based multifunction microcontroller with the ioBorker home automation and allow the communication between device and ioBroker via MQTT.
+It includes both code running within iobroker and separate Web UI for device administration.
 
-It includes both code running within iobroker and as vis widget.
+## Dependencies
+1. simpleApi ioBroker Adapter
 
-## Steps 
-1. download and unpack this packet from github ```https://github.com/ioBroker/ioBroker.gofarmtech/archive/master.zip```
-  or clone git repository ```git clone --depth=1 https://github.com/ioBroker/ioBroker.gofarmtech.git```
+## Installation and configuration 
+1. Go to the Adapters tab within ioBroker admin page.
+2. Choose the "Install from custom URL" button and specify the adapter's github location:
+  ```https://github.com/bratello/GoFarmTech```
+3. The new GoFarmTech adapter was installed. Press the ```+``` icon to install the new adapter instance
+4. Go to the Instances ioBroker tab, and press the wrench icon of the newly created instance - instance settings page appears.
+![Logo](admin/adapterSettings.png)
+5. Specify relevant connection settings. Change the Port in case the instance failed after the installation, probably the port #1883 was acquired by other adapter.
+6. Go to the [device settings](https://github.com/bratello/GoFarmTech/blob/master/README.md) and specify same connection settings as well.
+7. Restart device. Go to the Objects ioBroker tab - the new entry will be created in gofarmtech.{your instance id}.devices folder, which means that new device was connected and successfully installed in GoFarmTech adapter instance. Check device settings in case you have troubles with initial device initialisation.  
+8. Go back to the Instances tab and press the right arrow icon near the adapter's instance. The device administation Web UI will be shown.
+![Logo](admin/timerSettings.png)
 
-2. download required npm packets. Write in ioBroker.gofarmtech directory:
-
-  ```npm install```
-  
-3. set name of this gofarmtech. Call
-  
-  ```gulp rename --name mynewname --email email@mail.com --author "Author Name"```
-  
-  *mynewname* must be **lower** case and with no spaces.
-
-  If gulp is not available, install gulp globally:
-  
-  ```npm install -g gulp-cli```
- 
-4. rename directory from *ioBroker.gofarmtech* (can be *ioBroker.gofarmtech-master*) to *iobroker.mynewname*
-
-5. to use this gofarmtech you should copy it into *.../iobroker/node_modules* directory and then create an instance for it with iobroker.admin
-
-6. create your adapter:
-
-  * you might want to start with main.js (code running within iobroker) and admin/index.html (the adapter settings page).
-
-  * [Adapter-Development-Documentation](https://github.com/ioBroker/ioBroker/wiki/Adapter-Development-Documentation),
-  
-  * [Installation, setup and first steps with an ioBroker Development Environment](https://github.com/ioBroker/ioBroker/wiki/Installation,-setup-and-first-steps-with-an-ioBroker-Development-Environment)
-  
-  * [Write and debug vis widgets](https://github.com/ioBroker/ioBroker/wiki/How-to-debug-vis-and-to-write-own-widget-set)
-  
-  * files under the www folders are made available under http://&lt;iobrokerIP&gt;:8082/&lt;adapter-name&gt;/
-    * for this to work the iobroker.vis adapter has to be installed
-    * delete this folder if you do not plan to export any files this way
-    * call ```iobroker upload <adapter-name>``` after you change files in the www folder to get the new files uploaded to vis
-  * the widget folder contains an example of a vis widget
-    * you might want to start with *widget/<adapter-name>.html* and *widget/js/<adapter-name>.js*
-    * call ```iobroker visdebug <adapter-name>``` to enable debugging and upload widget to "vis". (This works only from V0.7.15 of js-controller)
-    * If you do not plan to export any widget then delete the whole widget folder and remove the ```"restartAdapters": ["vis"]``` statement from *io-package.json*
-    * After admin/index.html is changed you must execute ```iobroker upload mynewname``` to see changes in admin console. The same is valid for any files in *admin* and *www* directory  
-
-7. change version: edit package.json and then call ```grunt p``` in your adapter directory.
-  
-8. share it with the community
-
-## Requirements
-* your github repository must have name "ioBroker.<adaptername>". **B** is capital in "ioBroker", but in the package.json the *name* must be low case, because npm does not allow upper case letters.
-* *title* in io-package.json (common) is simple short name of adapter in english. *titleLang* is object that consist short names in many languages. *Lang* ist not german Länge, but english LANGuages.
-* Do not use in the title the words "ioBroker" or "Adapter". It is clear anyway, that it is adapter for ioBroker.   
-
-## Changelog
-
-### 0.6.0 (2017.01.02)
-* (bluefox) Support of admin3
-
-### 0.5.0
-* (vegetto) include vis widget
-
-### 0.4.0
-* (bluefox) fix errors with grunt
-
-### 0.2.0
-* (bluefox) initial release
 
 ## License
 The MIT License (MIT)
