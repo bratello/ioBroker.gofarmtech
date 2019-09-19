@@ -11,7 +11,7 @@ It includes both code running within iobroker and separate Web UI for device adm
 ## Installation and configuration 
 1. Go to the Adapters tab within ioBroker admin page.
 2. Choose the "Install from custom URL" button and specify the adapter's github location:
-  ```https://github.com/bratello/GoFarmTech```
+  ```https://github.com/bratello/ioBroker.gofarmtech```
 3. The new GoFarmTech adapter was installed. Press the ```+``` icon to install the new adapter instance
 4. Go to the Instances ioBroker tab, and press the wrench icon of the newly created instance - instance settings page appears.
 ![Logo](admin/adapterSettings.png)
