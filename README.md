@@ -6,7 +6,7 @@ This adapter provides the integration of [GoFarmTech](https://github.com/bratell
 It includes both code running within iobroker and separate Web UI for device administration.
 
 ## Dependencies
-1. simpleApi ioBroker Adapter
+1. web ioBroker Adapter (installed automatically)
 
 ## Installation and configuration 
 1. Go to the Adapters tab within ioBroker admin page.

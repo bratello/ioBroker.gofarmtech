@@ -12,84 +12,86 @@ function getQueryParameterByName(name, url) {
 }
 
 var GoFarmService = (function () {
-	let apiHost = getQueryParameterByName('apiHost');
-	if(!apiHost) {
-		apiHost = location.hostname;
-	}
-	let apiPort = getQueryParameterByName('apiPort');
-	let apiUrl = `${location.protocol}//${apiHost}:${apiPort}/`;
+	let states = {};
+	let adapterId = getQueryParameterByName('id');
+	servConn.namespace   = 'gofarmtech.' + adapterId;
+    servConn._useStorage = false;
+    window.socketUrl = "";
 	return {
 		methods: {
-			saveValue: function(name, val) {
-				let url = `${apiUrl}set/${GoFarmTech.Device.deviceFullId}.${name}?value=` + JSON.stringify(val);
-				return this.$http.get(url).then((data) => {
-					return data.body;
+			initGoFarmService: function () {
+				return new Promise((resolve, reject) => {
+					let allDevice = `${servConn.namespace}.devices.*`;
+					servConn.init(
+				    	null,
+				    	{
+				    		onConnChange: function (isConnected) {
+					            if (isConnected) {
+					                console.log('connected');
+					                servConn.getStates(allDevice, function (err, _states) {
+					                	if(err) {
+					                		console.log(err);
+					                		reject(err);
+					                	} else {
+					                		states = _states;
+					                		resolve(true);
+					                	}
+					                });
+					            } else {
+					            	console.log('disconnected');
+					            	reject('disconnected');
+					            }
+					        },
+					        onRefresh: function () {
+					            window.location.reload();
+					        },
+					        onUpdate: function (id, state) {
+					        	if(id.indexOf(`${servConn.namespace}.devices`) !== 0) {
+					        		return;
+					        	}
+					            setTimeout(function () {
+					                console.log('NEW VALUE of ' + id + ': ' + JSON.stringify(state));
+					                states[id] = state;
+					            }, 0);
+					        },
+					        onError: function (err) {
+					            window.alert(_('Cannot execute %s for %s, because of insufficient permissions', err.command, err.arg), _('Insufficient permissions'), 'alert', 600);
+					        }
+				    	}
+				    );
 				});
 			},
-			getValue: function(name) {
-				let url = `${apiUrl}get/${GoFarmTech.Device.deviceFullId}.${name}`;
-				return this.$http.get(url).then((data) => {
-					return data.body.val;
-				});
+			saveValue: async function(name, val) {
+				let fullId = `${GoFarmTech.Device.deviceFullId}.${name}`;
+				servConn.setState(fullId, val);
+				return val;
 			},
-			getDeviceDescriptions: function() {
-				let getAdapters = () => {
-					return this.$http.get(`${apiUrl}search/?pattern=system.adapter.gofarmtech.*`).then((data) => {
-						return Object.keys(data.body.reduce((ret, item) => {
-							let parts = item.split('.');
-							if(parts.length > 4) {
-								let num = parts[3];
-								if(!isNaN(num)) {
-									let id = parseInt(num);
-									if(!(id in ret)) {
-										ret[id] = num;
-									}
-								}
-							}
-							return ret;
-						}, {}));
-					});
-				};
-				let getAdapterDevices = (adapterId) => {
-					return this.$http.get(`${apiUrl}search/?pattern=gofarmtech.${adapterId}.devices.*`).then((data) => {
-						return data.body.reduce((ret, item) => {
-							let parts = item.split('.');
-							if(parts.length === 4) {
-								let id = parts[3];
-								ret[id] = item;
-							}
-							return ret;
-						}, {});
-					});
-				};
-
-				let getDeviceDescription = (deviceId, devicePath) => {
-					return this.$http.get(`${apiUrl}get/${devicePath}`).then((data) => {
-						return data.body.val;
-					});
-				};
-
-				let getDevicesAndDescriptions = async () => {
-					var descriptions = [];
-					var adapterIds = await getAdapters();
-					for(let i = 0; i < adapterIds.length; i++) {
-						let adapterId = adapterIds[i];
-						let devices = await getAdapterDevices(adapterId);
-						for(let deviceId in devices) {
-							let deviceFullId = devices[deviceId];
-							let description = await getDeviceDescription(deviceId, devices[deviceId]);
-							descriptions.push({
-								adapterId,
-								deviceId,
-								deviceFullId,
-								description
-							});
-						}
+			getValue: async function(name) {
+				let fullId = `${GoFarmTech.Device.deviceFullId}.${name}`;
+				if(fullId in states) {
+					return states[fullId].val;
+				} else {
+					console.log(`Unknown state: ${fullId}`);
+					return null;
+				}
+			},
+			getDeviceDescriptions: async function() {
+				let descriptions = [];
+				let devicesPath = `${servConn.namespace}.devices`;
+				Object.keys(states).forEach((id) => {
+					if(id.indexOf(devicesPath) === 0 && id.indexOf('.', devicesPath.length + 1) == -1) {
+						let deviceId = id.substring(devicesPath.length + 1);
+						let deviceFullId = id;
+						let description = states[id].val;
+						descriptions.push({
+							adapterId,
+							deviceId,
+							deviceFullId,
+							description
+						});
 					}
-					return descriptions;
-				};
-
-				return getDevicesAndDescriptions();
+				});
+				return descriptions;
 			}
 		}
 	};
@@ -663,7 +665,7 @@ Vue.component('value-field', {
 	}
 });
 
-var app = new Vue({
+var _vueApp = new Vue({
 	el: 'md-app',
 	mixins: [GoFarmService],
 	data: {
@@ -730,17 +732,19 @@ var app = new Vue({
 			this.currentNavigation = this.navigations[0];
 		},
 		_initDeviceInfo: function() {
-			this.getDeviceDescriptions().then((data) => {
-				GoFarmTech.Devices = data;
-				this.devices = data;
-				if(data.length) {
-					GoFarmTech.Device = data[0];
-					GoFarmTech.DeviceDescription = GoFarmTech.Device.description;
-					this._initHeader();
-					this._initTitle();
-					this._initNavigations();
-				}
-				this.initialized = true;
+			this.initGoFarmService().then(() => {
+				this.getDeviceDescriptions().then((data) => {
+					GoFarmTech.Devices = data;
+					this.devices = data;
+					if(data.length) {
+						GoFarmTech.Device = data[0];
+						GoFarmTech.DeviceDescription = GoFarmTech.Device.description;
+						this._initHeader();
+						this._initTitle();
+						this._initNavigations();
+					}
+					this.initialized = true;
+				});
 			});
 		},
 		_startClock: function () {
