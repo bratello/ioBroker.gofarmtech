@@ -30,26 +30,26 @@
                 "nl": "Eerste release"
             }
         },
-		"title": "Javascript/Node.js based gofarmtech",
+		"title": "GoFarmTech adapter",
         "titleLang": {
-            "en": "Javascript/Node.js based gofarmtech",
-            "de": "Javascript / Node.js basierte Vorlagenadapter",
-            "ru": "Адаптер шаблонов на основе Javascript / Node.js",
-            "pt": "Adaptador de modelo baseado em Javascript / Node.js",
-            "nl": "Javascript / Node.js gebaseerde sjabloonadapter",
-            "fr": "Javascript / Node.js basé adaptateur de modèle",
-            "it": "Adattatore modello basato su Javascript / Node.js",
-            "es": "Adaptador de plantilla basado en JavaScript / Node.js"
+            "en": "GoFarmTech adapter",
+            "de": "GoFarmTech adapter",
+            "ru": "GoFarmTech adapter",
+            "pt": "GoFarmTech adapter",
+            "nl": "GoFarmTech adapter",
+            "fr": "GoFarmTech adapter",
+            "it": "GoFarmTech adapter",
+            "es": "GoFarmTech adapter"
         },
         "desc": {
-            "en": "ioBroker gofarmtech",
-            "de": "ioBroker Gofarmtech",
-            "ru": "ioBroker Gofarmtech как образец",
-            "pt": "Modelo de adaptador para o ioBroker",
-            "fr": "ioBroker adaptateur modèle",
-            "nl": "ioBroker Gofarmtech",
-            "it": "Adattatore modello ioBroker",
-            "es": "Adaptador de plantilla ioBroker"
+            "en": "GoFarmTech adapter for ioBroker",
+            "de": "GoFarmTech adapter for ioBroker",
+            "ru": "GoFarmTech adapter for ioBroker",
+            "pt": "GoFarmTech adapter for ioBroker",
+            "fr": "GoFarmTech adapter for ioBroker",
+            "nl": "GoFarmTech adapter for ioBroker",
+            "it": "GoFarmTech adapter for ioBroker",
+            "es": "GoFarmTech adapter for ioBroker"
         },
         "authors": [
             "@@Author@@ <@@email@@>"
@@ -89,6 +89,7 @@
         "user": "",
         "pass": "",
         "port": 1883,
+        "ackTimeout": 120,
         "timersUpdateInterval": 3600,
         "cronTimeout" : 60,
         "connectionTimeout" : 300
@@ -102,6 +103,14 @@
             "type": "channel",
             "common": {
                 "name": "Devices group"
+            },
+            "native": {}
+        },
+        {
+            "_id":  "alarms",
+            "type": "channel",
+            "common": {
+                "name": "Alarms group"
             },
             "native": {}
         },

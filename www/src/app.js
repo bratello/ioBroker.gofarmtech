@@ -21,22 +21,22 @@ var GoFarmService = (function () {
 		methods: {
 			initGoFarmService: function () {
 				return new Promise((resolve, reject) => {
-					let allDevice = `${servConn.namespace}.devices.*`;
+					let allStates = `${servConn.namespace}.*`;
 					servConn.init(
 				    	null,
 				    	{
 				    		onConnChange: function (isConnected) {
 					            if (isConnected) {
 					                console.log('connected');
-					                servConn.getStates(allDevice, function (err, _states) {
-					                	if(err) {
-					                		console.log(err);
-					                		reject(err);
-					                	} else {
-					                		states = _states;
-					                		resolve(true);
-					                	}
-					                });
+									servConn.getStates(allStates, function (err, _states) {
+										if(err) {
+											console.error(err);
+											reject(err);
+										} else {
+											Object.assign(states, _states);
+											resolve(true);
+										}
+									});
 					            } else {
 					            	console.log('disconnected');
 					            	reject('disconnected');
@@ -46,7 +46,7 @@ var GoFarmService = (function () {
 					            window.location.reload();
 					        },
 					        onUpdate: function (id, state) {
-					        	if(id.indexOf(`${servConn.namespace}.devices`) !== 0) {
+					        	if(id.indexOf(`${servConn.namespace}.devices`) !== 0 || id.indexOf(`${servConn.namespace}.alarms`)) {
 					        		return;
 					        	}
 					            setTimeout(function () {
@@ -74,6 +74,20 @@ var GoFarmService = (function () {
 					console.log(`Unknown state: ${fullId}`);
 					return null;
 				}
+			},
+			getAlarmValue:  async function(name) {
+				let fullId = `${servConn.namespace}.alarms.${GoFarmTech.Device.deviceId}.${name}`;
+				if(fullId in states) {
+					return states[fullId].val;
+				} else {
+					console.log(`Unknown state: ${fullId}`);
+					return null;
+				}
+			},
+			saveAlarmValue: async function(name, val) {
+				let fullId = `${servConn.namespace}.alarms.${GoFarmTech.Device.deviceId}.${name}`;
+				servConn.setState(fullId, val);
+				return val;
 			},
 			getDeviceDescriptions: async function() {
 				let descriptions = [];
@@ -493,7 +507,8 @@ Vue.component('value-settings', {
 			render: true,
 			updated: false,
 			sending: false,
-			resultMsg: ''
+			resultMsg: '',
+			doSaveAlarm: null
 		};
 	},
 	created: function() {
@@ -502,7 +517,7 @@ Vue.component('value-settings', {
 	methods: {
 		onChange: function(fieldName) {
 			this.navigation.changed = true;
-			if(this.navigation.changes.indexOf(fieldName) == -1) {
+			if(fieldName && this.navigation.changes.indexOf(fieldName) == -1) {
 				this.navigation.changes.push(fieldName);
 			}
 		},
@@ -518,6 +533,9 @@ Vue.component('value-settings', {
 						var item = this.navigation.value.ats.filter(item => item.nm == name)[0];
 						await this.saveValue(valueName + '.' + name, item.v);
 					}
+				}
+				if(this.doSaveAlarm) {
+					this.doSaveAlarm();
 				}
 				this.navigation.changed = false;
 				this.navigation.changes = [];
@@ -544,6 +562,9 @@ Vue.component('value-settings', {
 				this.navigation.changes = [];
 				this.render = true;
 			}, 250);
+		},
+		onSaveAlarm: function (callback) {
+			this.doSaveAlarm = callback;
 		}
 	},
 	watch: {
@@ -559,18 +580,163 @@ Vue.component('value-settings', {
 				<div class="md-title">{{navigation.text}} Settings</div>\
 			</md-card-header>\
 			<md-card-content>\
-					<value-field :value="navigation.value" :sending="sending" :invalid="navigation.invalid" :changed="onChange"></value-field>\
-					<div class="md-layout-item md-small-size-100" md-size-50 v-for="attribute in navigation.value.ats">\
-						<value-field :value="attribute" :sending="sending" :invalid="navigation.invalid" :changed="onChange"></value-field>\
-					</div>\
+				<md-tabs :class="{noTabs: navigation.value.nm === \'SystemInfo\'}">\
+					<md-tab id="tab-settings" md-label="Sensor">\
+						<value-field :value="navigation.value" :sending="sending" :invalid="navigation.invalid" :changed="onChange"></value-field>\
+						<div class="md-layout-item md-small-size-100" md-size-50 v-for="attribute in navigation.value.ats">\
+							<value-field :value="attribute" :sending="sending" :invalid="navigation.invalid" :changed="onChange"></value-field>\
+						</div>\
+					</md-tab>\
+					<md-tab id="tab-alarm" md-label="Alarm">\
+						<value-alarm :value="navigation.value" :sending="sending" :invalid="navigation.invalid" :changed="onChange" :onsave="onSaveAlarm"></value-alarm>\
+					</md-tab>\
+				</md-tabs>\
 			</md-card-content>\
 			<md-progress-bar md-mode="indeterminate" v-if="sending" />\
-			<md-card-actions>\
-				<md-button type="submit" class="md-primary" :disabled="navigation.invalid.length > 0 || navigation.changes.length == 0 || sending">Apply</md-button>\
+			<md-card-actions md-alignment="left">\
+				<md-button type="submit" class="md-primary" :disabled="navigation.invalid.length > 0 || !navigation.changed || sending">Apply</md-button>\
 			</md-card-actions>\
 		</md-card>\
 		<md-snackbar :md-active.sync="updated">{{resultMsg}}</md-snackbar>\
 	</form>'
+});
+
+Vue.component('value-alarm', {
+	mixins: [GoFarmService],
+	props: ['value', 'sending', 'invalid', 'onsave', 'changed'],
+	data : function () {
+		function getLimitsOffsetAndStep(limit) {
+			let ret = {
+				step: 1,
+				offset: 1
+			};
+			let val = Math.abs(limit);
+			if(val < 100) {
+				ret.step = 1;
+				ret.offset = 100;
+			} else if(val < 250) {
+				ret.step = 10;
+				ret.offset = 250;
+			} else if(val < 500) {
+				ret.step = 50;
+				ret.offset = 500;
+			} else if(val < 5000) {
+				ret.step = 100;
+				ret.offset = 5000;
+			}
+
+			return ret;
+		}
+
+		let data = {
+			dataChanged: false,
+			alarm: null,
+			minMaxLimits: this.value.ats.reduce((ret, item) => {
+				if(item.nm === 'minValue') {
+					let conf = getLimitsOffsetAndStep(item.v);
+					ret.minValLimit = item.v;
+					ret.minValStep = conf.step;
+					ret.minValOffset = conf.offset;
+				} else if(item.nm === 'maxValue') {
+					let conf = getLimitsOffsetAndStep(item.v);
+					ret.maxValLimit = item.v;
+					ret.maxValStep = conf.step;
+					ret.maxValOffset = conf.offset;
+				}
+				return ret;
+			}, {})
+		};
+		return data;
+	},
+	created: function () {
+		this.getAlarmValue(this.value.nm).then((val) => {
+			this.alarm = val;
+		});
+		this.onsave(this.doSaveAlarm);
+		return;
+	},
+	methods: {
+		alarmChanged: function () {
+			this.dataChanged = true;
+			this.changed();
+		},
+		criticalMaxEnabled: function () {
+			this.alarmChanged();
+			if(this.alarm.critical.min.enabled && this.alarm.critical.min.value === 0) {
+				this.alarm.critical.min.value = this.minMaxLimits.minValLimit;
+			}
+		},
+		criticalMinEnabled: function () {
+			this.alarmChanged();
+			if(this.alarm.critical.max.enabled && this.alarm.critical.max.value === 0) {
+				this.alarm.critical.max.value = this.minMaxLimits.maxValLimit;
+			}
+		},
+		doSaveAlarm() {
+			if(this.dataChanged) {
+				this.dataChanged = false;
+				this.saveAlarmValue(this.value.nm, this.alarm);
+			}
+		}
+	},
+	template: '\
+	<div v-if="alarm">\
+		<div>\
+			<md-switch :disabled="sending" v-model="alarm.enabled" class="md-primary" @change="alarmChanged()">Enabled</md-switch>\
+		</div>\
+		<md-field><div class="md-layout-item md-small-size-100" md-size-50>\
+			<label for="ackTimeout">Acknowledge Timeout: {{alarm.ackTimeout}} sec</label>\
+			<md-input\
+				:disabled="sending || !alarm.enabled"\
+				name="ackTimeout"\
+				id="ackTimeout"\
+				v-model="alarm.ackTimeout"\
+				required="required"\
+				min="0" \
+				max="500"\
+				step="10"\
+				@change="alarmChanged()"\
+				type="range"/>\
+		</div></md-field>\
+		<div v-if="minMaxLimits.minValLimit > 0">\
+			<md-switch :disabled="sending || !alarm.enabled" v-model="alarm.critical.min.enabled" class="md-primary" @change="criticalMaxEnabled()">Critical MinValue Alert</md-switch>\
+			<md-field>\
+				<div class="md-layout-item md-small-size-100" md-size-50>\
+					<label for="criticalMinValue">Critical MinValue: {{alarm.critical.min.value}}</label>\
+					<md-input\
+						:disabled="sending || !alarm.enabled || !alarm.critical.min.enabled"\
+						name="criticalMinValue"\
+						id="criticalMinValue"\
+						v-model="alarm.critical.min.value"\
+						required="required"\
+						:min="minMaxLimits.minValLimit - minMaxLimits.minValOffset" \
+						:max="minMaxLimits.minValLimit + minMaxLimits.minValOffset"\
+						:step="minMaxLimits.minValStep"\
+						@change="alarmChanged()"\
+						type="range"/>\
+				</div>\
+			</md-field>\
+		</div>\
+		<div v-if="minMaxLimits.maxValLimit > 0">\
+			<md-switch :disabled="sending || !alarm.enabled" v-model="alarm.critical.max.enabled" class="md-primary" @change="criticalMinEnabled()">Critical MaxValue Alert</md-switch>\
+			<md-field>\
+				<div class="md-layout-item md-small-size-100" md-size-50>\
+					<label for="criticalMaxValue">Critical MaxValue: {{alarm.critical.max.value}}</label>\
+					<md-input\
+						:disabled="sending || !alarm.enabled || !alarm.critical.max.enabled"\
+						name="criticalMaxValue"\
+						id="criticalMaxValue"\
+						v-model="alarm.critical.max.value"\
+						required="required"\
+						:min="minMaxLimits.maxValLimit - minMaxLimits.maxValOffset" \
+						:max="minMaxLimits.maxValLimit + minMaxLimits.maxValOffset"\
+						step="minMaxLimits.maxValStep"\
+						@change="alarmChanged()"\
+						type="range"/>\
+				</div>\
+			</md-field>\
+		</div>\
+	</div>'
 });
 
 Vue.component('value-field', {
@@ -580,20 +746,32 @@ Vue.component('value-field', {
 		maxVal = 999999;
 		step = 1;
 		if(this.value.tp === GoFarmTech.Type.number) {
-			if(this.value.v < 0) {
-				minVal = -100;
-				maxVal = 250;
-				step = 1;
-			}
-			else if(this.value.v < 100) {
-				maxVal = 250;
+			let val = Math.abs(this.value.v);
+			let isNegative = this.value.v != val;
+			if(val < 100) {
+				if(isNegative) {
+					minVal = this.value.v - 250;
+				}
+				maxVal = this.value.v + 250;
 				step = 1;
 			} else if(this.value.v < 1000) {
-				maxVal = 1500;
+				if(isNegative) {
+					minVal = this.value.v - 1500;
+				}
+				maxVal = this.value.v + 1500;
 				step = 10;
 			} else if(this.value.v < 10000) {
-				maxVal = 15000;
+				if(isNegative) {
+					minVal = this.value.v - 15000;
+				}
+				maxVal = this.value.v + 15000;
 				step = 50;
+			}
+
+			if(this.value.nm === 'skipTime') {
+				minVal = 0;
+				maxVal = 60000;
+				step = 250;
 			}
 		}
 		return {

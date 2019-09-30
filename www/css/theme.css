@@ -6,6 +6,10 @@
   color: #ff5252 !important;
 }
 
+.md-tabs.noTabs .md-tabs-navigation {
+  display: none;
+}
+
 .router-link-active .md-icon.md-theme-default.md-icon-font {
   color: #448aff;
 }
@@ -32,7 +36,7 @@
 }
 
 .with-tabs main > .md-app-scroller {
-	margin-top: 136px !important;
+  margin-top: 136px !important;
 }
 
 .dynamic-drawer-btn {
@@ -62,8 +66,8 @@
 }
 
 .timeslot-list-item {
-	box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
-	margin: 6px 0;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+  margin: 6px 0;
 }
 
 .timeslot-list-item .timeslot-delete-button {
@@ -78,11 +82,11 @@
 }
 
 .timeslot-list-item .md-list-item-content {
-	padding-top: 58px;
+  padding-top: 58px;
 }
 
 .timeslot-list-item .md-list-item-text  label {
-	margin-top: 8px;
+  margin-top: 8px;
     display: block;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -93,36 +97,36 @@
 }
 
 .timeslot-list-item input[type=range] {
-	margin-top: 2px;
+  margin-top: 2px;
 }
 
 .timeslot-list-item-star {
-	color: #ff5252;
+  color: #ff5252;
 }
 
 .timeslot-list-item-days {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	background-color: #448aff;
-	padding: 8px;
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #448aff;
+  padding: 8px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
 }
 
 .timeslot-list-item-days .timeslot-list-item-day {
-	display: inline-block;
-	width: 28px;
-	padding: 2px;
-	margin-right: 8px;
-	border-radius: 4px;
-	text-align: center;
-	color: white;
-	font-size: 16px;
-	outline: none;
-	cursor: pointer;
-	-webkit-touch-callout: none;
+  display: inline-block;
+  width: 28px;
+  padding: 2px;
+  margin-right: 8px;
+  border-radius: 4px;
+  text-align: center;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  cursor: pointer;
+  -webkit-touch-callout: none;
     -webkit-user-select: none;
      -khtml-user-select: none;
        -moz-user-select: none;
@@ -131,15 +135,15 @@
 }
 
 .timeslot-list-item-days .timeslot-list-item-day.inactive {
-	text-decoration: line-through;
-	color: rgba(255,255,255, 0.7);
-	background-color: #3b76d9;
+  text-decoration: line-through;
+  color: rgba(255,255,255, 0.7);
+  background-color: #3b76d9;
 }
 
 @media only screen and (max-width: 600px) and (min-width: 0) {
-	.md-app-content {
-		padding: 8px;
-	}
+  .md-app-content {
+    padding: 8px;
+  }
 
   .dynamic-drawer-btn {
     display: block;
@@ -149,9 +153,9 @@
     margin-left:58px;
   }
 
-	.timeslot-list-item-days .timeslot-list-item-day {
-		margin-right: 4px;
-	}
+  .timeslot-list-item-days .timeslot-list-item-day {
+    margin-right: 4px;
+  }
 }
 
 input[type=range] {
@@ -160,6 +164,11 @@ input[type=range] {
   margin: 10px 0;
   width: 100%;
 }
+
+input[type=range][disabled=disabled] {
+  filter: blur(1px) grayscale(90%);
+}
+
 input[type=range]:focus {
   outline: none;
 }
