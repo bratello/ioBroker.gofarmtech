@@ -64,6 +64,9 @@ var GoFarmService = (function () {
 			saveValue: async function(name, val) {
 				let fullId = `${GoFarmTech.Device.deviceFullId}.${name}`;
 				servConn.setState(fullId, val);
+				if(fullId in states) {
+					states[fullId].val = val;
+				}
 				return val;
 			},
 			getValue: async function(name) {
@@ -86,7 +89,7 @@ var GoFarmService = (function () {
 			},
 			saveAlarmValue: async function(name, val) {
 				let fullId = `${servConn.namespace}.alarms.${GoFarmTech.Device.deviceId}.${name}`;
-				servConn.setState(fullId, val);
+				servConn.setState(fullId, {val: val, ack: true, q: 0});
 				return val;
 			},
 			getDeviceDescriptions: async function() {
@@ -523,6 +526,7 @@ Vue.component('value-settings', {
 		},
 		validate: function() {
 			async function saveAll() {
+				this.sending = true;
 				var changes = this.navigation.changes;
 				var valueName = this.navigation.value.nm;
 				for(var i = 0; i < changes.length; i++) {
@@ -539,6 +543,7 @@ Vue.component('value-settings', {
 				}
 				this.navigation.changed = false;
 				this.navigation.changes = [];
+				this.sending = false;
 			}
 
 			saveAll.bind(this)();
@@ -692,13 +697,13 @@ Vue.component('value-alarm', {
 				id="ackTimeout"\
 				v-model="alarm.ackTimeout"\
 				required="required"\
-				min="0" \
+				min="60" \
 				max="500"\
 				step="10"\
 				@change="alarmChanged()"\
 				type="range"/>\
 		</div></md-field>\
-		<div v-if="minMaxLimits.minValLimit > 0">\
+		<div v-if="minMaxLimits.minValLimit !== undefined">\
 			<md-switch :disabled="sending || !alarm.enabled" v-model="alarm.critical.min.enabled" class="md-primary" @change="criticalMaxEnabled()">Critical MinValue Alert</md-switch>\
 			<md-field>\
 				<div class="md-layout-item md-small-size-100" md-size-50>\
@@ -717,7 +722,7 @@ Vue.component('value-alarm', {
 				</div>\
 			</md-field>\
 		</div>\
-		<div v-if="minMaxLimits.maxValLimit > 0">\
+		<div v-if="minMaxLimits.maxValLimit !== undefined">\
 			<md-switch :disabled="sending || !alarm.enabled" v-model="alarm.critical.max.enabled" class="md-primary" @change="criticalMinEnabled()">Critical MaxValue Alert</md-switch>\
 			<md-field>\
 				<div class="md-layout-item md-small-size-100" md-size-50>\

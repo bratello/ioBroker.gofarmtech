@@ -52,4 +52,19 @@ function main() {
     const Server = require(__dirname + '/lib/server');
     server = new Server(adapter);
     server.initialize();
+    server.on('ackTimeout', (id, state, alarm) => {
+        server.deviceNameFromId(id).then((name) => {
+            server.info('ackTimeout Event', id, name, state, alarm);
+        });
+    });
+    server.on('criticalMinValue', (id, state, alarm) => {
+        server.deviceNameFromId(id).then((name) => {
+            server.info('criticalMinValue Event', id, name, state, alarm);
+        });
+    });
+    server.on('criticalMaxValue', (id, state, alarm) => {
+        server.deviceNameFromId(id).then((name) => {
+            server.info('criticalMaxValue Event', id, name, state, alarm);
+        });
+    });
 }
