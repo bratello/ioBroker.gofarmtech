@@ -14,12 +14,17 @@ It includes both code running within iobroker and separate Web UI for device adm
   ```https://github.com/bratello/ioBroker.gofarmtech```
 3. The new GoFarmTech adapter was installed. Press the ```+``` icon to install the new adapter instance
 4. Go to the Instances ioBroker tab, and press the wrench icon of the newly created instance - instance settings page appears.
-![Logo](admin/adapterSettings.png)
+![Adapter](admin/adapterSettings.png)
 5. Specify relevant connection settings. Change the Port in case the instance failed after the installation, probably the port #1883 was acquired by other adapter.
 6. Go to the [device settings](https://github.com/bratello/GoFarmTech/blob/master/README.md) and specify same connection settings as well.
 7. Restart device. Go to the Objects ioBroker tab - the new entry will be created in gofarmtech.{your instance id}.devices folder, which means that new device was connected and successfully installed in GoFarmTech adapter instance. Check device settings in case you have troubles with initial device initialisation.  
 8. Go back to the Instances tab and press the right arrow icon near the adapter's instance. The device administation Web UI will be shown.
-![Logo](admin/timerSettings.png)
+	- Timer Settings
+![Timer](admin/timerSettings.png)
+	- Sensor Settings
+![Sensor](admin/sensorSettings.png)
+	- Sensor Alarm Settings
+![Alarm](admin/sensorAlarmSettings.png)
 
 
 ## License
