@@ -66,10 +66,17 @@
         $('.value').each(function () {
             let $this = $(this);
             let type = $this.attr('type');
+            if($this.is(':invalid')) {
+                let label = $this.parent().find('label').text();
+                showMessage('<h5>"' + label + '" field value wrong</h5>');
+                $this.focus();
+                return;
+            }
             if (type === 'checkbox') {
                 obj[$this.attr('id')] = $this.prop('checked');
             } else if(type === 'number') {
-                obj[$this.attr('id')] = parseInt($this.val());
+                let val = parseInt($this.val());
+                obj[$this.attr('id')] = val;
             } else {
                 obj[$this.attr('id')] = $this.val();
             }
@@ -91,17 +98,17 @@
             </div>
             <div class="row">
                 <div class="input-field col s12 m6 l4">
-                    <input class="value" id="user" type="text">
+                    <input class="value" id="user" type="text" placeholder="userName">
                     <label for="user">User</label>
                     <span class="translate">MQTT Broker Username</span>
                 </div>
                 <div class="input-field col s12 m6 l4">
-                    <input class="value" id="pass" type="text">
+                    <input class="value" id="pass" type="text" placeholder="password">
                     <label for="pass">Password</label>
                     <span class="translate">MQTT Broker Password</span>
                 </div>
                 <div class="input-field col s12 m6 l4">
-                    <input class="value" id="pass_confirm" type="text">
+                    <input class="value" id="pass_confirm" type="text" placeholder="password">
                     <label for="pass_confirm">Password Confirmation</label>
                     <span class="translate">MQTT Broker Password Confirmation</span>
                 </div>
@@ -111,14 +118,19 @@
             </div>
             <div class="row">
                 <div class="input-field col s12 m6 l4">
-                    <input type="number" class="value" id="port" />
+                    <input type="number" class="value" id="port" placeholder="1883" required/>
                     <label for="port" class="translate">Port</label>
                     <span class="translate">MQTTP Broker Port</span>
                 </div>
                 <div class="input-field col s12 m6 l4">
-                    <input type="number" class="value" id="connectionTimeout" />
+                    <input type="number" min="0" max="600" class="value" id="connectionTimeout" placeholder="300" required/>
                     <label for="connectionTimeout" class="translate">Timeout</label>
                     <span class="translate">MQTTP Broker Connection Timeout (sec)</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" min="0" max="300" class="value" id="ackTimeout" placeholder="120" required/>
+                    <label for="ackTimeout" class="translate">Acknowledge Timeout</label>
+                    <span class="translate">MQTTP Broker Acknowledge State Timeout (sec)</span>
                 </div>
             </div>
             <div class="row">
@@ -126,12 +138,12 @@
             </div>
             <div class="row">
                 <div class="input-field col s12 m6 l4">
-                    <input type="number" class="value" id="cronTimeout" />
+                    <input type="number" class="value" min="10" max="60" id="cronTimeout" placeholder="30" required/>
                     <label for="cronTimeout" class="translate">Cron Interval</label>
                     <span class="translate">How Often To Run Tasks (sec)</span>
                 </div>
                 <div class="input-field col s12 m6 l4">
-                    <input type="number" class="value" id="timersUpdateInterval" />
+                    <input type="number" class="value" min="300" max="86400" id="timersUpdateInterval" placeholder="3600" required/>
                     <label for="timersUpdateInterval" class="translate">TimerUpdate Interval</label>
                     <span class="translate">How Often To Update Device Timers (sec)</span>
                 </div>
@@ -145,6 +157,33 @@
                         <option value="7" class="translate">All</option>
                     </select>
                     <label for="logLevel" class="translate">Adapter Logging Level</label>
+                </div>
+            </div>
+            <div class="row">
+                <h6 class="translate sub-title" data-lang="Alarm settings">Alarm settings</h6>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6 l4">
+                    <input type="url" class="value" id="alarmWebHook" placeholder="http://myalaram.net?param=value"/>
+                    <label for="alarmWebHook" class="translate">External Alarm System WebHook URL</label>
+                    <span class="translate">WebHook URL of the external alarm or incident management system (POST)</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" class="value" id="sysMinHeap" min="1" max="100" placeholder="10" required />
+                    <label for="sysMinHeap" class="translate">Minimal Free Device Heap</label>
+                    <span class="translate">The minimal memory heap available on device (KB)</span>
+                </div>
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" class="value" id="sysMaxHeapFrag" min="1" max="100" placeholder="50" required/>
+                    <label for="sysMaxHeapFrag" class="translate">Maximal Device Heap Fragmentation</label>
+                    <span class="translate">The maximal memory heap fragmentation on device (%)</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12 m6 l4">
+                    <input type="number" class="value" id="resendAlarmTimeout" min="100" max="1200" placeholder="50" required/>
+                    <label for="resendAlarmTimeout" class="translate">Resend alarm timeout</label>
+                    <span class="translate">Resend same alarm every X minutes (min)</span>
                 </div>
             </div>
             <br/><br/><br/><br/><br/><br/><br/><br/>

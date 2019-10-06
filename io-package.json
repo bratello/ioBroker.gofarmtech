@@ -30,7 +30,7 @@
                 "nl": "Eerste release"
             }
         },
-		"title": "GoFarmTech adapter",
+        "title": "GoFarmTech adapter",
         "titleLang": {
             "en": "GoFarmTech adapter",
             "de": "GoFarmTech adapter",
@@ -92,7 +92,11 @@
         "ackTimeout": 120,
         "timersUpdateInterval": 3600,
         "cronTimeout" : 60,
-        "connectionTimeout" : 300
+        "connectionTimeout" : 300,
+        "alarmWebHook": "",
+        "sysMinHeap": 5,
+        "sysMaxHeapFrag": 50,
+        "resendAlarmTimeout": 120
     },
     "objects": [
 

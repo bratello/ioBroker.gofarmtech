@@ -50,21 +50,8 @@ function main() {
     adapter.log.info('adpater start: ' + adapter.namespace);
 
     const Server = require(__dirname + '/lib/server');
+    const Alarm = require(__dirname + '/lib/alarm');
     server = new Server(adapter);
     server.initialize();
-    server.on('ackTimeout', (id, state, alarm) => {
-        server.deviceNameFromId(id).then((name) => {
-            server.info('ackTimeout Event', id, name, state, alarm);
-        });
-    });
-    server.on('criticalMinValue', (id, state, alarm) => {
-        server.deviceNameFromId(id).then((name) => {
-            server.info('criticalMinValue Event', id, name, state, alarm);
-        });
-    });
-    server.on('criticalMaxValue', (id, state, alarm) => {
-        server.deviceNameFromId(id).then((name) => {
-            server.info('criticalMaxValue Event', id, name, state, alarm);
-        });
-    });
+    Alarm(server);
 }
