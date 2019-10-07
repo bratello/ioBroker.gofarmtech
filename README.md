@@ -5,6 +5,13 @@
 This adapter provides the integration of [GoFarmTech](https://github.com/bratello/GoFarmTech) based multifunction microcontroller with the ioBorker home automation and allow the communication between device and ioBroker via MQTT.
 It includes both code running within iobroker and separate Web UI for device administration.
 
+## Main Keys
+ - Automatic device registration
+ - Automatic WebUI Settings generation for registered device
+ - Abbility to configure devices and sensors in offline
+ - Per-Sensor Alarm settings (see [sensor alarm](admin/sensorAlarmSettings.png) settings tab)
+ - WebHook integration with external Alarm/Incident Management System (see [adapter](admin/adapterSettings.png) settings, alarm section)
+
 ## Dependencies
 1. web ioBroker Adapter (installed automatically)
 
@@ -30,7 +37,7 @@ It includes both code running within iobroker and separate Web UI for device adm
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2018 @@Author@@ <@@email@@>
+Copyright (c) 2019 bratello <https://github.com/bratello>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
