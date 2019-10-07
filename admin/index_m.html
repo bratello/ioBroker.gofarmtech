@@ -28,6 +28,31 @@
  </style>
 <!-- you have to define 2 functions in the global scope: -->
 <script type="text/javascript">
+    let PwdProtector = (function() {
+        let key = '8MnqcMK9QDtl1xtkEyJU';
+        return {
+            encrypt: function (value) {
+                var result = '';
+                for(var i = 0; i < value.length; ++i) {
+                    result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+                }
+                return result;
+            },
+            decrypt: function (value) {
+                if(typeof(value) !== "string") {
+                    return "";
+                }
+                var result = '';
+                for(var i = 0; i < value.length; ++i) {
+                    result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+                }
+                return result;
+            }
+        };
+    })();
+    
+
+    
 
     // the function loadSettings has to exist ...
     function load(settings, onChange) {
@@ -42,8 +67,12 @@
                     onChange();
                 });
             } else {
+                let val = settings[id];
+                if(id === 'pass' || id === 'user') {
+                    val = PwdProtector.decrypt(val);
+                }
                 // do not call onChange direct, because onChange could expect some arguments
-                $key.val(settings[id]).on('change', function() {
+                $key.val(val).on('change', function() {
                     onChange();
                 }).on('keyup', function() {
                     onChange();
@@ -78,7 +107,15 @@
                 let val = parseInt($this.val());
                 obj[$this.attr('id')] = val;
             } else {
-                obj[$this.attr('id')] = $this.val();
+                let key = $this.attr('id');
+                if(key === 'pass_confirm') {
+                    return;
+                }
+                let val = $this.val();
+                if(key === 'pass' || key === 'user') {
+                    val = PwdProtector.encrypt(val);
+                }
+                obj[key] = val;
             }
         });
         callback(obj);
