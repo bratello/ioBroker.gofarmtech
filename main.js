@@ -50,8 +50,10 @@ function main() {
     adapter.log.info('adpater start: ' + adapter.namespace);
 
     const Server = require(__dirname + '/lib/server');
-    const Alarm = require(__dirname + '/lib/alarm');
+    const alarmService = require(__dirname + '/lib/alarm');
+    const offlineService = require(__dirname + '/lib/offline');
     server = new Server(adapter);
     server.initialize();
-    Alarm(server);
+    alarmService(server);
+    offlineService(server);
 }
