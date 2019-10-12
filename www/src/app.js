@@ -61,11 +61,18 @@ var GoFarmService = (function () {
 				    );
 				});
 			},
-			saveValue: async function(name, val) {
+			saveValue: async function(name, val, updateLocal) {
 				let fullId = `${GoFarmTech.Device.deviceFullId}.${name}`;
 				servConn.setState(fullId, val);
 				if(fullId in states) {
 					states[fullId].val = val;
+				}
+				if(updateLocal) {
+					servConn.getStates([fullId], (err, _states) => {
+						if(!err) {
+							Object.assign(states, _states);
+						}
+					});
 				}
 				return val;
 			},
@@ -158,7 +165,7 @@ Vue.component('timer-settings', {
 		};
 	},
 	created: function() {
-		this.navigation.tabs = this.timerValue.its.reduce((function(init, task, idx) {
+		this.navigation.tabs = this.timerValue.its.reduce((init, task, idx) => {
 			let item = {
 				id: idx,
 				text: task.nm,
@@ -171,8 +178,11 @@ Vue.component('timer-settings', {
 			this.getValue(`${this.name}.${task.nm}.enabled`).then((onOff) => {
 				item.enabled.v = onOff;
 			});
+			this.getValue(`${this.name}.${task.nm}`).then((slots) => {
+				item.timeslots = this.wrapTimeslots(slots);
+			});
 			return init;
-		}).bind(this), []);
+		}, []);
 		this.currentTab = this.navigation.tabs[0];
 
 		this.navigation.menu = [
@@ -311,7 +321,7 @@ Vue.component('timer-settings', {
 		onApplyChanges: function() {
 			this.currentTab.changed = false;
 			this.currentTab.timeslots.removeDirty();
-			this.saveValue(this.name + '.' + this.currentTab.text, this.currentTab.timeslots);
+			this.saveValue(this.name + '.' + this.currentTab.text, this.currentTab.timeslots, true);
 			this.currentTab.timeslots.applyDirty();
 		},
 		onEnableTimer: function(enabled) {
