@@ -33,6 +33,7 @@ It includes both code running within iobroker and separate Web UI for device adm
 	- Sensor Alarm Settings
 ![Alarm](admin/sensorAlarmSettings.png)
 
+## Changelog
 
 ## License
 The MIT License (MIT)
